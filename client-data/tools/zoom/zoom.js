@@ -170,6 +170,12 @@
         window.removeEventListener("keyup", keyup);
     }
 
+    function getOrigin() {
+        return {... origin};
+    }
+    Tools.getOrigin = getOrigin;
+
+
     var zoomTool = {
         "name": "Zoom",
         "shortcut": "z",
