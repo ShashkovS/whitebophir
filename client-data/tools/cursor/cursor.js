@@ -29,7 +29,7 @@
     // Allocate half of the maximum server updates to cursor updates
     var MIN_CURSOR_UPDATES_INTERVAL_MS = Tools.server_config.MAX_EMIT_COUNT_PERIOD / Tools.server_config.MAX_EMIT_COUNT * 2;
 
-    var CURSOR_DELETE_AFTER_MS = 1000 * 5;
+    var CURSOR_DELETE_AFTER_MS = 1000 * 3600;
 
     var lastCursorUpdate = 0;
     var sending = true;
@@ -78,8 +78,6 @@
             (sending || Tools.curTool.showMarker)) {
             Tools.drawAndSend(message, cursorTool);
             lastCursorUpdate = cur_time;
-        } else {
-            draw(message);
         }
     }
 
@@ -102,12 +100,53 @@
     function getCursor(id) {
         return document.getElementById(id) || createCursor(id);
     }
+    var dummyDot = null;
+
+    function bounds(el) {
+        let rect = el.getBoundingClientRect();
+        const cx = (rect.left + rect.right) / 2;
+        const cy = (rect.top + rect.bottom) / 2;
+        rect = dummyDot.getBoundingClientRect();
+        const dotSize = (rect.right - rect.left);
+        const wh = (window.innerHeight || document.documentElement.clientHeight);
+        const ww = (window.innerWidth || document.documentElement.clientWidth);
+        return {cx, cy, wh, ww, dotSize, wmin: Math.min(wh, ww)};
+    }
 
     function draw(message) {
+        if (!dummyDot) {
+            dummyDot = getCursor('cursor-dymmyDot');
+            dummyDot.setAttributeNS(null, "r", "0.5"); // So r-l=1
+            dummyDot.setAttributeNS(null, "fill-opacity", "0.001");
+        }
         var cursor = getCursor("cursor-" + (message.socket || 'me'));
         cursor.style.transform = "translate(" + message.x + "px, " + message.y + "px)";
         if (Tools.isIE) cursor.setAttributeNS(null, "transform", "translate(" + message.x + " " + message.y + ")");
         cursor.setAttributeNS(null, "fill", message.color);
-        cursor.setAttributeNS(null, "r", message.size / 2);
+
+        if (message.socket) {
+            const bnd = bounds(cursor);
+            const useR = 0.025 * (bnd.wmin / bnd.dotSize);
+            cursor.setAttributeNS(null, "r", useR.toString());
+            cursor.setAttributeNS(null, "fill-opacity", "0.25");
+            // let dx = 0;
+            // let dy = 0;
+            // if (bnd.cx < 0) dx = -bnd.cx;
+            // else if (bnd.cx > bnd.ww) dx = bnd.ww - bnd.cx;
+            // if (bnd.cy < 0) dy = -bnd.cy;
+            // else if (bnd.cy > bnd.wh) dy = bnd.wh - bnd.cy;
+            // if (dx !== 0 || dy !== 0) {
+            //     // Нужно сдвинуть (useX, useY) на (dx, dy), вот только в масштабе
+            //     const canvRect = document.getElementById('canvas').getBoundingClientRect();
+            //     console.log({canvRect, message, bnd});
+            //     const canvWid = canvRect.right - canvRect.left;
+            //     const useX = message.x + dx * canvWid / bnd.ww;
+            //     const useY = message.y + dy * canvWid / bnd.ww;
+            //     cursor.style.transform = "translate(" + useX + "px, " + useY + "px)";
+            //     if (Tools.isIE) cursor.setAttributeNS(null, "transform", "translate(" + useX + " " + useY + ")");
+            // }
+        } else {
+            cursor.setAttributeNS(null, "r", message.size / 2);
+        }
     }
 })();

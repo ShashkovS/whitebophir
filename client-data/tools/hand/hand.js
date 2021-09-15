@@ -1,7 +1,7 @@
 /**
  *						  WHITEBOPHIR
  *********************************************************
- * @licstart  The following is the entire license notice for the 
+ * @licstart  The following is the entire license notice for the
  *	JavaScript code in this page.
  *
  * Copyright (C) 2013  Ophir LOJKINE
@@ -457,47 +457,64 @@
 	}
 
 	function press(x, y, evt, isTouchEvent) {
-		if (!handTool.secondary.active) startHand(x, y, evt, isTouchEvent);
-		else clickSelector(x, y, evt, isTouchEvent);
+		// console.log(evt);
+		// if (!handTool.secondary.active)
+		startHand(x, y, evt, isTouchEvent);
+		// else clickSelector(x, y, evt, isTouchEvent);
 	}
 
 
 	function move(x, y, evt, isTouchEvent) {
-		if (!handTool.secondary.active) moveHand(x, y, evt, isTouchEvent);
-		else moveSelector(x, y, evt, isTouchEvent);
+		// if (!handTool.secondary.active)
+			moveHand(x, y, evt, isTouchEvent);
+		// else moveSelector(x, y, evt, isTouchEvent);
 	}
 
 	function release(x, y, evt, isTouchEvent) {
 		move(x, y, evt, isTouchEvent);
-		if (handTool.secondary.active) releaseSelector(x, y, evt, isTouchEvent);
+		// if (handTool.secondary.active) releaseSelector(x, y, evt, isTouchEvent);
 		selected = null;
 	}
+	//
+	// function deleteShortcut(e) {
+	// 	if (e.key == "Delete" &&
+	// 		!e.target.matches("input[type=text], textarea"))
+	// 		deleteSelection();
+	// }
+	//
+	// function duplicateShortcut(e) {
+	// 	if (e.key == "d" &&
+	// 		!e.target.matches("input[type=text], textarea"))
+	// 		duplicateSelection();
+	// }
 
-	function deleteShortcut(e) {
-		if (e.key == "Delete" &&
-			!e.target.matches("input[type=text], textarea"))
-			deleteSelection();
-	}
-
-	function duplicateShortcut(e) {
-		if (e.key == "d" &&
-			!e.target.matches("input[type=text], textarea"))
-			duplicateSelection();
-	}
-
-	function switchTool() {
-		onquit();
-		if (handTool.secondary.active) {
-			window.addEventListener("keydown", deleteShortcut);
-			window.addEventListener("keydown", duplicateShortcut);
-		}
-	}
+	// function switchTool() {
+	// 	onquit();
+		// if (handTool.secondary.active) {
+		// 	window.addEventListener("keydown", deleteShortcut);
+		// 	window.addEventListener("keydown", duplicateShortcut);
+		// }
+	// }
 
 	function onquit() {
 		selected = null;
-		hideSelectionUI();
-		window.removeEventListener("keydown", deleteShortcut);
-		window.removeEventListener("keydown", duplicateShortcut);
+		// hideSelectionUI();
+		// window.removeEventListener("keydown", deleteShortcut);
+		// window.removeEventListener("keydown", duplicateShortcut);
+	}
+
+	function middleMouse(e) {
+		// if (e.key == "Delete" &&
+		// 	!e.target.matches("input[type=text], textarea"))
+		// 	deleteSelection();
+		if (e && (e.which == 2 || e.button == 4 )) {
+			if (e.type === 'mousedown') press(e);
+			else if (e.type === 'mousemove') move(e);
+			else if (e.type === 'mouseup') release(e);
+			e.preventDefault();
+			console.log('middleclicked');
+			console.log(e);
+		}
 	}
 
 	var handTool = { //The new tool
@@ -509,12 +526,12 @@
 			"release": release,
 		},
 		"onquit": onquit,
-		"secondary": {
-			"name": "Selector",
-			"icon": "tools/hand/selector.svg",
-			"active": false,
-			"switch": switchTool,
-		},
+		// "secondary": {
+		// 	"name": "Selector",
+		// 	"icon": "tools/hand/selector.svg",
+		// 	"active": false,
+		// 	"switch": switchTool,
+		// },
 		"draw": draw,
 		"icon": "tools/hand/hand.svg",
 		"mouseCursor": "move",
@@ -522,4 +539,7 @@
 	};
 	Tools.add(handTool);
 	Tools.change("Hand"); // Use the hand tool by default
+	// window.addEventListener("mousedown", middleMouse);
+	// window.addEventListener("mousemove", middleMouse);
+	// window.addEventListener("mouseup", middleMouse);
 })(); //End of code isolation

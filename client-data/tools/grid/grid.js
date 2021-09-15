@@ -29,6 +29,10 @@
     var index = 0; //grid off by default
     var states = ["none", "url(#grid)", "url(#dots)"];
 
+    function onstart() {
+        index = 2;
+        gridContainer.setAttributeNS(null, "fill", states[index]);
+    }
     function toggleGrid(evt) {
         index = (index + 1) % states.length;
         gridContainer.setAttributeNS(null, "fill", states[index]);
@@ -73,8 +77,8 @@
         // dots
         var dots = Tools.createSVGElement("pattern", {
             id: "dots",
-            width: "30",
-            height: "30",
+            width: "50",
+            height: "50",
             x: "-10",
             y: "-10",
             patternUnits: "userSpaceOnUse"
@@ -114,5 +118,6 @@
         "onstart": toggleGrid,
         "mouseCursor": "crosshair",
     });
+    onstart();
 
 })(); //End of code isolation

@@ -1,7 +1,7 @@
 /**
  *                        WHITEBOPHIR
  *********************************************************
- * @licstart  The following is the entire license notice for the 
+ * @licstart  The following is the entire license notice for the
  *  JavaScript code in this page.
  *
  * Copyright (C) 2013  Ophir LOJKINE
@@ -54,6 +54,7 @@
     }
 
     function setOrigin(x, y, evt, isTouchEvent) {
+        console.log({origin});
         origin.scrollX = document.documentElement.scrollLeft;
         origin.scrollY = document.documentElement.scrollTop;
         origin.x = x;
